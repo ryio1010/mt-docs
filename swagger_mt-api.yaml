@@ -1,0 +1,189 @@
+swagger: '2.0'
+info:
+  description: >-
+    MuscleTrackingApp用のAPI
+  version: 1.0.0
+  title: Swagger mt-api
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: ryo.iwahara1010@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: mt-api
+basePath: /api/v1
+tags:
+  - name: user
+    description: 利用ユーザに関わるAPI操作
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+schemes:
+  - https
+  - http
+paths:
+  /user:
+    post:
+      tags:
+        - user
+      summary: Register new user
+      description: 新規ユーザー登録によりユーザーを追加する際の処理
+      operationId: addUser
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User object that needs to be added to the user table
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '400':
+          description: The userid has already userd
+      security:
+        - petstore_auth:
+            - write:pets
+            - read:pets
+  /user/{userId}:
+    get:
+      tags:
+        - user
+      summary: Find user by ID
+      description: UserIdでユーザー検索処理(１件)
+      operationId: getPetById
+      produces:
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user to return
+          required: true
+          type: string
+          format: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: User not found
+      security:
+        - api_key: []
+    post:
+      tags:
+        - user
+      summary: Updates a user by ID
+      description: UserIdでユーザー更新処理
+      operationId: updateUser
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user that needs to be updated
+          required: true
+          type: string
+          format: string
+        - name: name
+          in: formData
+          description: Updated name of the user
+          required: false
+          type: string
+        - name: status
+          in: formData
+          description: Updated status of the pet
+          required: false
+          type: string
+      responses:
+        '405':
+          description: Invalid input
+      security:
+        - petstore_auth:
+            - write:pets
+            - read:pets
+    delete:
+      tags:
+        - user
+      summary: Deletes a user by ID
+      description: UserIdでユーザー削除処理
+      operationId: deleteUser
+      produces:
+        - application/json
+      parameters:
+        - name: api_key
+          in: header
+          required: false
+          type: string
+        - name: userId
+          in: path
+          description: User id to delete
+          required: true
+          type: string
+          format: string
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: User not found
+      security:
+        - petstore_auth:
+            - write:pets
+            - read:pets
+
+securityDefinitions:
+  petstore_auth:
+    type: oauth2
+    authorizationUrl: http://petstore.swagger.io/oauth/dialog
+    flow: implicit
+    scopes:
+      write:pets: modify pets in your account
+      read:pets: read your pets
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      username:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      userStatus:
+        type: integer
+        format: int32
+        description: User Status
+    xml:
+      name: User
+  ApiResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      type:
+        type: string
+      message:
+        type: string
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
