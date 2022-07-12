@@ -22,7 +22,7 @@ schemes:
   - https
   - http
 paths:
-  /user:
+  /user/add:
     post:
       tags:
         - user
@@ -42,8 +42,30 @@ paths:
             $ref: '#/definitions/User'
       responses:
         '400':
-          description: The userid has already userd
-
+          description: Duplicate key detected
+  
+  /user/update:
+   put:
+      tags:
+        - user
+      summary: Updates a user by ID
+      description: UserIdでユーザー更新処理
+      operationId: updateUser
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User object that needs to be added to the user table
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '404':
+          description: User not found
+  
   /user/{userId}:
     get:
       tags:
@@ -65,42 +87,10 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/User'
-        '400':
-          description: Invalid ID supplied
         '404':
           description: User not found
       security:
         - api_key: []
-    post:
-      tags:
-        - user
-      summary: Updates a user by ID
-      description: UserIdでユーザー更新処理
-      operationId: updateUser
-      consumes:
-        - application/x-www-form-urlencoded
-      produces:
-        - application/json
-      parameters:
-        - name: userId
-          in: path
-          description: ID of user that needs to be updated
-          required: true
-          type: string
-          format: string
-        - name: name
-          in: formData
-          description: Updated name of the user
-          required: false
-          type: string
-        - name: status
-          in: formData
-          description: Updated status of the pet
-          required: false
-          type: string
-      responses:
-        '405':
-          description: Invalid input
           
     delete:
       tags:
@@ -122,8 +112,6 @@ paths:
           type: string
           format: string
       responses:
-        '400':
-          description: Invalid ID supplied
         '404':
           description: User not found
 
